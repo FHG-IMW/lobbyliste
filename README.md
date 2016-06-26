@@ -1,8 +1,7 @@
 # Lobbyliste
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lobbyliste`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This gem crawls and parses the the list of lobbyists which is published as a PDF by the German Bundestag.
+It provides a simple interface to the parsed data.
 
 ## Installation
 
@@ -20,17 +19,37 @@ Or install it yourself as:
 
     $ gem install lobbyliste
 
+*NOTE: This gem requires JAVA to be installed. We use [PDFBox](https://pdfbox.apache.org/)   for PDF extraction as this currently seems to be the best alternative for pdf to tex extraction*
+
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'lobbyliste'
 
-## Development
+list = Lobbyliste.fetch_and_parse
+organisation = list.organisations.first
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+organisation.name #=> 1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+organisation.people.map {|person| person.name} #=> ["Claudius Groß", "Markus Hoymann", "Thomas M. Schimmel"]
 
-## Contributing
+organisation.tags #=> ["Kultur", "Religion"]
+
+address = organisation.name_and_address
+puts address.full_address
+#1219. Deutsche Stiftung für interreligiösen und #interkulturellen Dialog e. V.
+#Hinter der katholischen Kirche 3
+#10117 Berlin
+#Deutschland
+#Tel: +4930 51057773
+#Fax: +4930 51057785
+#Email: schimmel@1219.eu
+#http://www.1219.eu
+```
+
+
+
+# Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lobbyliste. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
@@ -38,4 +57,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
