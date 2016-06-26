@@ -7,6 +7,7 @@ module Lobbyliste
             factory.id,
             factory.name_and_address,
             factory.additional_address,
+            factory.address_at_bt_br,
             factory.people,
             factory.interests,
             factory.members,
@@ -31,6 +32,12 @@ module Lobbyliste
       def additional_address
         data = read_section("W e i t e r e A d r e s s e")
         return nil if data[0] == "–"
+        NameAndAddressFactory.build(data,:secondary)
+      end
+
+      def address_at_bt_br
+        data = read_section("A n s c h r i f t a m S i t z v o n B T u n d B R g")
+        return nil if data[0] == "–" || data[0].match(/\(s\. Abschnitt/)
         NameAndAddressFactory.build(data,:secondary)
       end
 

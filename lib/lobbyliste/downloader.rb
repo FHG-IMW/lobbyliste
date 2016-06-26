@@ -4,11 +4,18 @@ require 'nokogiri'
 module Lobbyliste
   class Downloader
 
-    attr_accessor :pdf_data, :text_data
 
-    def initialize
-      retrieve_pdf
+    def pdf_data
+      retrieve_pdf unless @pdf_data
+      @pdf_data
     end
+
+    def text_data
+      extract_pdf unless @text_data
+      @text_data
+    end
+
+    private
 
     def pdf_link
       website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
@@ -20,14 +27,13 @@ module Lobbyliste
 
     def retrieve_pdf
       @pdf_data = open(pdf_link) {|f| f.read}
-      extract_pdf
     end
 
 
     def extract_pdf
       begin
         pdf_file = Tempfile.new(["lobbyliste",".pdf"])
-        pdf_file.write(@pdf_data)
+        pdf_file.write(pdf_data)
         pdf_file.rewind
 
         text_file = Tempfile.new(["lobbyliste",".txt"])

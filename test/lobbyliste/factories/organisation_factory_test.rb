@@ -44,7 +44,11 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
         "(s. Abschnitt \"Vorstand und Geschäftsführung\")",
         "Max Mustermann",
         "A n s c h r i f t a m S i t z v o n B T u n d B R g",
-        "(s. Abschnitt \"Name und Sitz, 1. Adresse\")"
+        "Rahel-Hirsch-Straße 10 (3. OG)",
+        "10557 Berlin",
+        "Tel.: (030) 590083562 Fax: (030) 590083700",
+        "E-Mail: contact@ziv-zweirad.de",
+        "Internet: http://www.ziv-zweirad.de",
     ]
     @org = Lobbyliste::Factories::OrganisationFactory.new(@organisation_data)
   end
@@ -95,6 +99,24 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
     org = Lobbyliste::Factories::OrganisationFactory.new(data)
 
     assert_nil org.additional_address
+  end
+
+  def test_address_at_bt_br_extraction
+    address = @org.address_at_bt_br
+    assert address.is_a?(Lobbyliste::NameAndAddress)
+    assert_equal "", address.name
+    assert address.address.include? "Rahel-Hirsch-Straße 10"
+    assert_equal :secondary, address.type
+  end
+
+  def test_address_at_bt_br_ignores_see_other
+    data = [
+      "A n s c h r i f t a m S i t z v o n B T u n d B R g",
+      "(s. Abschnitt \"Name und Sitz, 1. Adresse\")"
+    ]
+    org = Lobbyliste::Factories::OrganisationFactory.new(data)
+
+    assert_nil org.address_at_bt_br
   end
 
   def test_people_extraction

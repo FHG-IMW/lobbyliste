@@ -13,28 +13,33 @@ module Lobbyliste
 
       def initialize(data)
         @data = data
-        @lines = data.each_line.to_a
+        @lines = data.each_line.to_a.map(&:chomp)
+        @organisations = nil
+        @tags = nil
       end
 
       def organisations
+        return @organisations if @organisations
         organisations = organisation_data.map {|organisation| ::Lobbyliste::Factories::OrganisationFactory.build(organisation) }
 
         tags.each_pair do |organisation_id,tags|
-          org = organisations.find {|org| org.id == organisation_id}
+          org = organisations.find {|o| o.id == organisation_id}
           org.tags = tags if org
         end
 
-        organisations
+        @organisations = organisations
       end
 
 
       def tags
+        return @tags if @tags
+
         tags = Hash.new{|h,k| h[k] = []}
         tag_data = extract_tag_data
 
         current_tag = "A"
         tag_data.each do |line|
-          if line.match(/^[A-ZÄÖÜ][a-zäöüß]+$/) && [current_tag[0],current_tag[0].next].include(line[0])
+          if line.match(/^[A-ZÄÖÜ][a-zäöüß]+$/) && [current_tag[0],current_tag[0].next].include?(line[0])
             current_tag = line
           elsif line.match(/^\– \d+/)
             id = line.match(/^\– (\d+)/)[1].to_i
@@ -42,7 +47,7 @@ module Lobbyliste
           end
         end
 
-        tags
+        @tags = tags
       end
 
       private
@@ -53,7 +58,6 @@ module Lobbyliste
           end_line = nil
 
           @lines.each_with_index do |line,i|
-            line.chomp!
             next if ignored_line?(line)
 
             if possible_organisation_id?(line) && begin_organisation?(@lines[i+1])
@@ -73,18 +77,11 @@ module Lobbyliste
         end
 
         def extract_tag_data
-          tag_data = []
           start_line = @lines.index {|line| line == "Stichwortverzeichnis"}
-          p start_line
-          @lines.drop(start_line+1) do |line|
-            line.chomp!
-            next if ignored_line?(line)
-            break if line == "Verzeichnis der anderen Namensformen"
-            tag_data << line
-          end
-          p tag_data
-
-          tag_data
+          @lines.
+            drop(start_line+1).
+            take_while {|line| !(line == "Verzeichnis der anderen Namensformen")}.
+            reject {|line| ignored_line?(line)}
         end
 
 
