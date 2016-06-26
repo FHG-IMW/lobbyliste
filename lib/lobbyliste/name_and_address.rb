@@ -14,5 +14,20 @@ module Lobbyliste
       @email = email
       @type=type
     end
+
+    def full_address
+      full_address = [
+        @name,
+        @address,
+        [@postcode,@city].reject(&:nil?).join(" "),
+        @country,
+      ]
+
+      full_address << "Tel: #{@tel}" if @tel
+      full_address << "Fax: #{@fax}" if @fax
+      full_address << "Email: #{@email}" if @email
+      full_address << @website if @website
+      full_address.reject(&:nil?).join("\n")
+    end
   end
 end
