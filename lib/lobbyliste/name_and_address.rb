@@ -29,5 +29,20 @@ module Lobbyliste
       full_address << @website if @website
       full_address.reject(&:nil?).join("\n")
     end
+
+    def to_json(*a)
+      {
+          name: name,
+          address: address,
+          postcode: postcode,
+          city: city,
+          country: country,
+          tel: tel,
+          fax: fax,
+          email: email,
+          website: website,
+          type: type.to_s
+      }.to_json(*a)
+    end
   end
 end

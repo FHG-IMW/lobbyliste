@@ -10,5 +10,12 @@ module Lobbyliste
     def ==(other)
       name==other.name && titles==other.titles
     end
+
+    def to_json(*a)
+      {
+          name: name,
+          titles: titles
+      }.to_json(*a)
+    end
   end
 end

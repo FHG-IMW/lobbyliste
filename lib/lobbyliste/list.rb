@@ -6,5 +6,12 @@ module Lobbyliste
       @organisations = organisations
       @tags=tags
     end
+
+    def to_json(*a)
+      {
+          organisations: organisations,
+          tags: tags
+      }.to_json(*a)
+    end
   end
 end

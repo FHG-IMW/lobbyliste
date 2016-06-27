@@ -22,5 +22,18 @@ module Lobbyliste
     def addresses
       [name_and_address,additional_address,address_at_bt_br].reject(&:nil?)
     end
+
+    def to_json(*a)
+      {
+          id: id,
+          name: name,
+          addresses: addresses,
+          people: people,
+          interests: interests,
+          members: members,
+          associated_organisations: associated_organisations,
+          tags: tags
+      }.to_json(*a)
+    end
   end
 end

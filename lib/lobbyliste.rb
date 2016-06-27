@@ -6,6 +6,7 @@ require "lobbyliste/name_and_address"
 require "lobbyliste/person"
 require "lobbyliste/downloader"
 require "lobbyliste/core_ext/string"
+require 'json'
 
 module Lobbyliste
   def self.fetch_and_parse
