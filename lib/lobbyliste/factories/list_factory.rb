@@ -20,14 +20,11 @@ module Lobbyliste
 
       def organisations
         return @organisations if @organisations
-        organisations = organisation_data.map {|organisation| ::Lobbyliste::Factories::OrganisationFactory.build(organisation) }
 
-        tags.each_pair do |organisation_id,tags|
-          org = organisations.find {|o| o.id == organisation_id}
-          org.tags = tags if org
-        end
+        @organisations = extract_organisation_data.map {|organisation| ::Lobbyliste::Factories::OrganisationFactory.build(organisation) }
+        tag_organisations
 
-        @organisations = organisations
+        @organisations
       end
 
 
@@ -43,7 +40,7 @@ module Lobbyliste
             current_tag = line
           elsif line.match(/^\– \d+/)
             id = line.match(/^\– (\d+)/)[1].to_i
-            tags[id] << current_tag
+            tags[current_tag] << id
           end
         end
 
@@ -53,7 +50,7 @@ module Lobbyliste
       private
 
 
-        def organisation_data
+        def extract_organisation_data
           start_lines = []
           end_line = nil
 
@@ -72,7 +69,7 @@ module Lobbyliste
             @lines[a..b-1]
           end
 
-          organisation_data << @lines[start_lines.last..end_line-1]
+          organisation_data << @lines[start_lines.last..end_line]
           organisation_data
         end
 
@@ -82,6 +79,15 @@ module Lobbyliste
             drop(start_line+1).
             take_while {|line| !(line == "Verzeichnis der anderen Namensformen")}.
             reject {|line| ignored_line?(line)}
+        end
+
+        def tag_organisations
+          tags.each_pair do |tag,organisation_ids|
+            organisation_ids.each do |organisation_id|
+              org = @organisations.find {|o| o.id == organisation_id}
+              org.tags << tag if org
+            end
+          end
         end
 
 
