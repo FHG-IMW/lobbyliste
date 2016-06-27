@@ -5,9 +5,5 @@ rvm:
   - "2.2"
   - "2.3.0"
 
-env:
-  - RUN_REAL_WORLD_TEST = true
-  - RUN_REAL_WORLD_TEST = false
-
 before_build:
-  - java -version
+  - gem install bundler -v 1.11.2
