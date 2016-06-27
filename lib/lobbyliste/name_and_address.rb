@@ -1,6 +1,37 @@
 module Lobbyliste
+
+  # This class represents addresses found in the lobbylist.
   class NameAndAddress
-    attr_reader :name, :address, :postcode, :city, :country, :tel, :fax, :website, :email, :type
+
+    # @return [String] the name of the organisation
+    attr_reader :name
+
+    # @return [String] Everything that is not part of the name or any other field
+    attr_reader :address
+
+    # @return [String] Postcode
+    attr_reader :postcode
+
+    # @return [String] City
+    attr_reader :city
+
+    # @return [String] the country, default: "Germany"
+    attr_reader :country
+
+    # @return [String] the telephone number if given (german numbers are automatically prefixed with +49)
+    attr_reader :tel
+
+    # @return [String] the fax number if given (german numbers are automatically prefixed with +49)
+    attr_reader :fax
+
+    # @return [String] website url
+    attr_reader :website
+
+    # @return [String] contact email address
+    attr_reader :email
+
+    # @return [Symbol] address type, :primary for 1. address, :secondary for all others
+    attr_reader :type
 
     def initialize(name, address, postcode, city, country, tel, fax, website, email, type)
       @name = name
@@ -15,6 +46,7 @@ module Lobbyliste
       @type=type
     end
 
+    # @return String pretty formated address of all existing address fields
     def full_address
       full_address = [
         @name,

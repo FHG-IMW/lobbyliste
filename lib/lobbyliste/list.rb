@@ -1,6 +1,13 @@
 module Lobbyliste
+
+  # This class represents an instance of the parsed lobbylist.
   class List
-    attr_reader :organisations, :tags
+
+    # @return [Array] list of organisations
+    attr_reader :organisations
+
+    # @return [Hash] keys are the tags, values are Arrays of organisation ids
+    attr_reader :tags
 
     def initialize(organisations, tags)
       @organisations = organisations

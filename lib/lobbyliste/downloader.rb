@@ -2,14 +2,18 @@ require 'open-uri'
 require 'nokogiri'
 
 module Lobbyliste
+
+  # This class finds the lobbyliste pdf on the Bundestag website, downloads it and extracts the pdf content
   class Downloader
 
-
+    # @return [String] raw content of pdf file
     def pdf_data
       retrieve_pdf unless @pdf_data
       @pdf_data
     end
 
+
+    # @return [String] extracted content of pdf file
     def text_data
       extract_pdf unless @text_data
       @text_data
@@ -46,9 +50,6 @@ module Lobbyliste
         pdf_file.unlink
       end
     end
-
-
-    private
 
     def jar_path
       File.join(File.dirname(File.expand_path(__FILE__)), '../../ext/pdfbox.jar')

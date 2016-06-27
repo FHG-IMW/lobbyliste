@@ -9,6 +9,9 @@ require "lobbyliste/core_ext/string"
 require 'json'
 
 module Lobbyliste
+
+  # Download the PDF and parse it
+  # @return [Lobbyliste::Liste]
   def self.fetch_and_parse
     downloader = Lobbyliste::Downloader.new
     Lobbyliste::Factories::ListFactory.build(downloader.text_data)
