@@ -57,6 +57,11 @@ For example to create a gziped json file run:
 $ lobbyliste | gzip > lobbyliste.json.gz 
 ```
 
+
+# Special Thanks
+
+- [Sebastian Vollnhals (@yetzt)](https://github.com/yetzt) - for his excellent node based scraper for the lobbyliste (https://github.com/yetzt/scraper-lobbyliste) from which many lines were reused.
+
 # Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lobbyliste. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
