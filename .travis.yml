@@ -9,6 +9,5 @@ env:
   - RUN_REAL_WORLD_TEST = true
   - RUN_REAL_WORLD_TEST = false
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq openjdk-8-jre
+before_build:
+  - java -version
