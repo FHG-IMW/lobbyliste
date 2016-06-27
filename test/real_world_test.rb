@@ -2,7 +2,7 @@ require 'test_helper'
 
 class RealWorldTest < Minitest::Test
   def test_real_world_sanity_check
-    skip unless ENV["RUN_REAL_WORLD_TEST"]
+    skip unless ENV["RUN_REAL_WORLD_TEST"] == "true"
     VCR.turned_off do
       WebMock.allow_net_connect!
       liste = Lobbyliste.fetch_and_parse
