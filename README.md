@@ -1,5 +1,7 @@
 # Lobbyliste
 
+[![Build Status](https://travis-ci.org/FHG-IMW/lobbyliste.svg?branch=master)](https://travis-ci.org/FHG-IMW/lobbyliste) [![Documentation Status](https://inch-ci.org/github/FHG-IMW/lobbyliste.svg?branch=master)](https://inch-ci.org/github/FHG-IMW/lobbyliste/suggestions?branch=master)
+
 This gem crawls and parses the the list of lobbyists which is published as a PDF by the German Bundestag.
 Our goal is to provide a simple and easy to maintain parser.
 
