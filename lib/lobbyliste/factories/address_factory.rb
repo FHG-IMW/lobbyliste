@@ -1,9 +1,9 @@
 module Lobbyliste
   module Factories
-    class NameAndAddressFactory
-      def self.build(raw_data, type=:primary)
-        factory = new(raw_data,type)
-        ::Lobbyliste::NameAndAddress.new(
+    class AddressFactory
+      def self.build(name,raw_data, type=:primary)
+        factory = new(name,raw_data,type)
+        ::Lobbyliste::Address.new(
           factory.name,
           factory.address,
           factory.postcode,
@@ -17,11 +17,12 @@ module Lobbyliste
         )
       end
 
-      attr_reader :tel, :fax, :website, :email, :country, :postcode, :city, :type
+      attr_reader :name, :tel, :fax, :website, :email, :country, :postcode, :city, :type
 
-      def initialize(raw_data,type=:primary)
+      def initialize(name,raw_data,type=:primary)
+        @name = name
         @raw_data = raw_data
-        @name = []
+
         @address = []
         @tel = nil
         @fax = nil
@@ -38,19 +39,15 @@ module Lobbyliste
       def parse
         @raw_data.each_with_index do |line,i|
           case label(line,i)
-            when :name then @name << line
             when :addr then @address << line
             when :tel then extract_tel_fax(line)
             when :postcode then extract_postcode_city(line)
             when :email then extract_email(line)
             when :website then extract_website(line)
             when :country then @country = line
+            else next
           end
         end
-      end
-
-      def name
-        @name.join(" ")
       end
 
       def address
@@ -60,25 +57,23 @@ module Lobbyliste
       private
 
       def label(line,i)
-        # first line is allways a name
-        return :name if i==0 && type==:primary
+        # this line is part of the name
+        return :name if name.include?(line)
+
         return :tel if line.match(/^(Tel\.|Fax): /)
         return :email if   line.match(/^E\-Mail\: /)
         return :website if  line.match(/^Internet\:/)
-        # if line contains e.V.
-        return :name if  line.match(/[eE]\.\s?[vV]\.$/)
+
         # international postcodes
         return :postcode if line.match(/^\d{5,7}\s(.+)$/)
         # UK postcodes
         return :postcode if line.match(/^([A-Z0-9]{3}\s?[A-Z0-9]{3})$/)
+
         # if the line looks like an address
         return :addr if  line.match(/(c\/o|^postfach\b|[Ss]tr(aße|\.)?\b|[Aa]llee\b|[Pp]latz\b|[Gg]asse\b|[Ww]eg\b|\b([0-9]+\-)?[0-9]+\s?[a-zA-Z]*$|[Vv]orstand|[Ss]ekretär|[Gg]eschäfts)/)
-        # if the second line starts with a small latter it should be a name
-        return :name if i==2 && line.match(/^[a-z]+/)
-        # if the previous line ended with an - then its a name (getrenntes Wort)
-        return :name if i==2 && @raw_data[0].match(/\-|\–$/)
         # if the previous line ended with e.V. the next line is addr
         return :addr if @raw_data[i-1].match(/(e\.\s?V\.|\([A-Z]+\)$)/)
+
         return :country if %w(Niederlande Belgien Schweiz Luxemburg Dänemark Österreich Tschechien Polen USA Israel Russland).include?(line)
         # a single Word with a capital letter is probably a country
         return :country if i > 3 && line.match(/^[A-Z][a-zA-Zöüä?]+$/)

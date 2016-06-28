@@ -3,28 +3,39 @@ module Lobbyliste
     class ListFactory
       attr_reader :data
 
-      def self.build(raw_data)
-        factory = new(raw_data)
+      def self.build(text_data,html_data)
+        factory = new(text_data,html_data)
         ::Lobbyliste::List.new(
           factory.organisations,
           factory.tags
         )
       end
 
-      def initialize(data)
-        @data = data
-        @lines = data.each_line.to_a.map(&:chomp)
+      def initialize(text_data,html_data)
+        @text_data = text_data
+        @html_data = html_data
+        @lines = text_data.each_line.to_a.map(&:chomp)
         @organisations = nil
         @tags = nil
+        @names = nil
       end
 
       def organisations
         return @organisations if @organisations
 
-        @organisations = extract_organisation_data.map {|organisation| ::Lobbyliste::Factories::OrganisationFactory.build(organisation) }
+        @organisations = organisations_data.map do |organisation_data|
+          name = names[organisation_data[0]]
+          ::Lobbyliste::Factories::OrganisationFactory.build(name,organisation_data)
+        end
+
         tag_organisations
 
         @organisations
+      end
+
+      def names
+        extract_names unless @names
+        @names
       end
 
 
@@ -50,13 +61,11 @@ module Lobbyliste
       private
 
 
-        def extract_organisation_data
+        def organisations_data
           start_lines = []
           end_line = nil
 
           @lines.each_with_index do |line,i|
-            next if ignored_line?(line)
-
             if possible_organisation_id?(line) && begin_organisation?(@lines[i+1])
               start_lines << i
             elsif line == "Stichwortverzeichnis"
@@ -65,13 +74,16 @@ module Lobbyliste
             end
           end
 
-          organisation_data = start_lines.each_cons(2).map do |a,b|
+          organisations_data = start_lines.each_cons(2).map do |a,b|
             @lines[a..b-1]
           end
 
-          organisation_data << @lines[start_lines.last..end_line]
-          organisation_data
+          organisations_data.
+              push(@lines[start_lines.last..end_line]).
+              map { |data| data.reject {|line| ignored_line?(line)} }
         end
+
+
 
         def extract_tag_data
           start_line = @lines.index {|line| line == "Stichwortverzeichnis"}
@@ -91,16 +103,29 @@ module Lobbyliste
         end
 
 
+        def extract_names
+          names = {}
+
+          regexp = Regexp.compile(/<p><b>(\d+)\n<\/b>N a m e u n d S i t z \, 1 \. A d r e s s e\n<\/p>\n<p><b>(.*?)\n<\/b>/m)
+
+          @html_data.to_enum(:scan, regexp).each do
+            match = Regexp.last_match
+            names[match[1]] = CGI.unescape_html(match[2].gsub("\n"," "))
+          end
+
+          @names = names
+        end
+
 
         def ignored_line?(line)
           regexps = [
                       /^– \d+ –$/,
                       /^Aktuelle Fassung der öffentlichen Liste/,
-                      /^Die Zahlen verweisen auf die forlaufenden Namen/,
+                      /^Die Zahlen verweisen auf die fortlaufenden Nummern im Hauptteil/,
                       /^\n$/
 
           ]
-          regexps.any? {|regexp| line =~ regexp}
+          regexps.any? {|regexp| line.match(regexp)}
         end
 
         def possible_organisation_id?(line)

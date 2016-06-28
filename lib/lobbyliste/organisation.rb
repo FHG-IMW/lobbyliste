@@ -5,13 +5,16 @@ module Lobbyliste
     # @return [Integer] the organisation id of the organisation. This number is not fix and may change with every new document version
     attr_reader :id
 
-    # @return [Lobbyliste::NameAndAddress] the primary Address of the organisation
-    attr_reader :name_and_address
+    # @return [String] the organisations name
+    attr_reader :name
 
-    # @return [Lobbyliste::NameAndAddress] the address stated under "Weitere Addresse"
+    # @return [Lobbyliste::Address] the primary Address of the organisation
+    attr_reader :address
+
+    # @return [Lobbyliste::Address] the address stated under "Weitere Addresse"
     attr_reader :additional_address
 
-    # @return [Lobbyliste::NameAndAddress] the address stated under "Anschrift am Sitz von BT und BRg"
+    # @return [Lobbyliste::Address] the address stated under "Anschrift am Sitz von BT und BRg"
     attr_reader :address_at_bt_br
 
     # @return [Array] List of {Lobbyliste::Person} which includes all members stated under "Vorstand und Geschäftsführung" and "Verbandsvertreter/-innen"
@@ -29,9 +32,10 @@ module Lobbyliste
     # @return [Array] list of tags
     attr_accessor :tags
 
-    def initialize(id, name_and_address, additional_address, address_at_bt_br, people, interests, members, associated_organisations)
+    def initialize(id, name, address, additional_address, address_at_bt_br, people, interests, members, associated_organisations)
       @id = id
-      @name_and_address = name_and_address
+      @name = name
+      @address = address
       @additional_address = additional_address
       @address_at_bt_br = address_at_bt_br
       @people = people
@@ -41,14 +45,9 @@ module Lobbyliste
       @tags = []
     end
 
-    # @return [String] organisation name extracted from primary address
-    def name
-      name_and_address.name
-    end
-
     # @return [Array] list of all known addresses
     def addresses
-      [name_and_address,additional_address,address_at_bt_br].reject(&:nil?)
+      [address,additional_address,address_at_bt_br].reject(&:nil?)
     end
 
     def to_json(*a)

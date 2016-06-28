@@ -18,8 +18,10 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
         "53177 Bonn",
         "Tel.: (0228) 953540 Fax: (0228) 9535440",
         "V o r s t a n d u n d G e s c h ä f t s f ü h r u n g",
+        "Vorstand:",
         "Pater Claudius Groß OFM, 1. Vorsitzender",
         "Markus Hoymann, 2. Vorsitzender",
+        "Weitere Vorstandsmitglieder:",
         "Dr.rer.pol. Thomas M. Schimmel, Geschäftsführer",
         "I n t e r e s s e n b e r e i c h",
         "Interreligiöser und interkultureller Dialog:",
@@ -50,11 +52,12 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
         "E-Mail: contact@ziv-zweirad.de",
         "Internet: http://www.ziv-zweirad.de",
     ]
-    @org = Lobbyliste::Factories::OrganisationFactory.new(@organisation_data)
+    @name = "1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V."
+    @org = Lobbyliste::Factories::OrganisationFactory.new(@name, @organisation_data)
   end
 
   def test_factory_builds_an_organisation
-    organisation = Lobbyliste::Factories::OrganisationFactory.build(@organisation_data)
+    organisation = Lobbyliste::Factories::OrganisationFactory.build(@name, @organisation_data)
     assert organisation.is_a?(Lobbyliste::Organisation)
     assert 1, organisation.id
   end
@@ -63,17 +66,16 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
     assert_equal 1, @org.id
   end
 
-  def test_name_and_address_extraction
-    name_and_address = @org.name_and_address
-    assert name_and_address.is_a?(Lobbyliste::NameAndAddress)
-    assert_equal "1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V.", name_and_address.name
+  def test_address_extraction
+    name_and_address = @org.address
+    assert name_and_address.is_a?(Lobbyliste::Address)
+    assert_equal @name, name_and_address.name
     assert_equal :primary, name_and_address.type
   end
 
   def test_additional_address_extraction
     name_and_address = @org.additional_address
-    assert name_and_address.is_a?(Lobbyliste::NameAndAddress)
-    assert_equal "", name_and_address.name
+    assert name_and_address.is_a?(Lobbyliste::Address)
     assert name_and_address.address.include? "c/o Missionszentrale der Franziskaner"
     assert_equal :secondary, name_and_address.type
   end
@@ -96,15 +98,14 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
         "Markus Hoymann, 2. Vorsitzender",
         "Dr.rer.pol. Thomas M. Schimmel, Geschäftsführer",
     ]
-    org = Lobbyliste::Factories::OrganisationFactory.new(data)
+    org = Lobbyliste::Factories::OrganisationFactory.new(@name, data)
 
     assert_nil org.additional_address
   end
 
   def test_address_at_bt_br_extraction
     address = @org.address_at_bt_br
-    assert address.is_a?(Lobbyliste::NameAndAddress)
-    assert_equal "", address.name
+    assert address.is_a?(Lobbyliste::Address)
     assert address.address.include? "Rahel-Hirsch-Straße 10"
     assert_equal :secondary, address.type
   end
@@ -114,7 +115,7 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
       "A n s c h r i f t a m S i t z v o n B T u n d B R g",
       "(s. Abschnitt \"Name und Sitz, 1. Adresse\")"
     ]
-    org = Lobbyliste::Factories::OrganisationFactory.new(data)
+    org = Lobbyliste::Factories::OrganisationFactory.new(@name, data)
 
     assert_nil org.address_at_bt_br
   end
@@ -127,7 +128,7 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
 
   def test_interest_extraction
     assert @org.interests.include? "die Förderung von Dialogkultur"
-    assert_equal 14, @org.interests.split("\n").count
+    assert @org.interests.include? "integrative Maßnahme."
   end
 
   def test_member_extraction

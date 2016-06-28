@@ -3,7 +3,7 @@ require 'test_helper'
 class Lobbyliste::NameAndAddressTest < Minitest::Test
 
   def test_full_address
-    name_and_address = Lobbyliste::NameAndAddress.new(
+    name_and_address = Lobbyliste::Address.new(
       "Test Name",
       "Test Address",
       "012345",

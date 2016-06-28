@@ -1,11 +1,12 @@
 module Lobbyliste
   module Factories
     class OrganisationFactory
-      def self.build(raw_data)
-        factory = new(raw_data)
+      def self.build(name, raw_data)
+        factory = new(name, raw_data)
         ::Lobbyliste::Organisation.new(
             factory.id,
-            factory.name_and_address,
+            factory.name,
+            factory.address,
             factory.additional_address,
             factory.address_at_bt_br,
             factory.people,
@@ -15,7 +16,10 @@ module Lobbyliste
         )
       end
 
-      def initialize(raw_data)
+      attr_reader :name
+
+      def initialize(name,raw_data)
+        @name = name
         @raw_data = raw_data
       end
 
@@ -24,33 +28,33 @@ module Lobbyliste
       end
 
 
-      def name_and_address
+      def address
         data = read_section("N a m e u n d S i t z , 1 . A d r e s s e")
-        NameAndAddressFactory.build(data,:primary)
+        AddressFactory.build(name, data, :primary)
       end
 
       def additional_address
         data = read_section("W e i t e r e A d r e s s e")
         return nil if data[0] == "–"
-        NameAndAddressFactory.build(data,:secondary)
+        AddressFactory.build(name, data, :secondary)
       end
 
       def address_at_bt_br
         data = read_section("A n s c h r i f t a m S i t z v o n B T u n d B R g")
         return nil if data[0] == "–" || data[0].match(/\(s\. Abschnitt/)
-        NameAndAddressFactory.build(data,:secondary)
+        AddressFactory.build(name, data, :secondary)
       end
 
       def people
         data = read_section("V o r s t a n d u n d G e s c h ä f t s f ü h r u n g")
         data.concat read_section("V e r b a n d s v e r t r e t e r / - i n n e n")
-        data.reject! {|line| line.match(/\(s\. Abschnitt/)}
+        data.reject! {|line| ignored_person_line?(line)}
 
-        data.map { |person| PersonFactory.build(person) }.uniq
+        data.map { |person| PersonFactory.build(person) }.uniq.reject(&:nil?)
       end
 
       def interests
-        read_section("I n t e r e s s e n b e r e i c h").join("\n")
+        read_section("I n t e r e s s e n b e r e i c h").join(" ").gsub(/(- )(?=[a-z])/,"")
       end
 
       def members
@@ -68,12 +72,34 @@ module Lobbyliste
            line =~ /^([a-zA-Z\d\,\.\-\/äöüß]\s){3,}\w$/
         end
 
-
         def read_section(section)
           start_line = @raw_data.index {|line| line == section}
           return [] unless start_line
 
           @raw_data.drop(start_line+1).take_while {|line| !new_section?(line)}
+        end
+
+        def ignored_person_line?(line)
+          [
+            /^–$/,
+            /\(s\. Abschnitt/,
+            /\:$/,
+            /^GdW$/,
+            /^Forschung$/,
+            /^des Verwaltungsrats$/,
+            /^Schatzmeister$/,
+            /^Kinder- u\. Jugendmed\.$/,
+            /^u\. Kinderchirurgen$/,
+            /^Finanzen & Recht I$/,
+            /^Geschäftsführ(er(in)?|ung)$/,
+            /^gleichzeitig Verbandsdirektor^/,
+            /^(stellvertretender )?Vorsitzender?$/,
+            /^weitere Vorstandsmitglieder$/,
+            /^Managementgesellschaft des DZVhÄ/,
+            /^Besonderer Vertreter nach § 30/,
+            /^Sektretär$/,
+            /^Alleingesellschafter: Ev\.Werk für/
+          ].any? {|regexp| line.match(regexp) }
         end
 
     end

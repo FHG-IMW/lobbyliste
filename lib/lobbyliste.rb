@@ -2,7 +2,7 @@ require "lobbyliste/version"
 require "lobbyliste/factories"
 require "lobbyliste/list"
 require "lobbyliste/organisation"
-require "lobbyliste/name_and_address"
+require "lobbyliste/address"
 require "lobbyliste/person"
 require "lobbyliste/downloader"
 require "lobbyliste/core_ext/string"
@@ -14,6 +14,6 @@ module Lobbyliste
   # @return [Lobbyliste::Liste]
   def self.fetch_and_parse
     downloader = Lobbyliste::Downloader.new
-    Lobbyliste::Factories::ListFactory.build(downloader.text_data)
+    Lobbyliste::Factories::ListFactory.build(downloader.text_data,downloader.html_data)
   end
 end

@@ -7,7 +7,8 @@ class Lobbyliste::Factories::PersonFactoryTest < Minitest::Test
         ["Dipl.-Ing Dirk Meier","Dirk Meier"],
         ["Apothekerin Jane Doe, Geschäftsführerin","Jane Doe"],
         ["Franz Müller","Franz Müller"],
-        ["Pater Claudius Groß OFM, 1. Vorsitzender","Claudius Groß"]
+        ["Pater Claudius Groß OFM, 1. Vorsitzender","Claudius Groß"],
+        ["Richter am Finanzgericht Rüdiger Schmittberg","Rüdiger Schmittberg"]
     ]
 
     data.each do |line,expected_name|

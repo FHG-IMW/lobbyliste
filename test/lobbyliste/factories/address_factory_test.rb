@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Lobbyliste::Factories::NameAndAddressFactoryTest < Minitest::Test
+class Lobbyliste::Factories::AddressFactoryTest < Minitest::Test
   def setup
     @data = [
         "1219. Deutsche Stiftung für interreligiösen und interkulturellen",
@@ -11,7 +11,8 @@ class Lobbyliste::Factories::NameAndAddressFactoryTest < Minitest::Test
         "E-Mail: schimmel@1219.eu",
         "Internet: http://www.1219.eu",
     ]
-    @name_and_address = Lobbyliste::Factories::NameAndAddressFactory.new(@data)
+    @name = "1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V."
+    @name_and_address = Lobbyliste::Factories::AddressFactory.new(@name, @data)
   end
 
 
@@ -63,7 +64,7 @@ class Lobbyliste::Factories::NameAndAddressFactoryTest < Minitest::Test
         "E-Mail: schimmel@1219.eu",
         "Internet: http://www.1219.eu",
     ]
-    name_and_address = Lobbyliste::Factories::NameAndAddressFactory.new(data)
+    name_and_address = Lobbyliste::Factories::AddressFactory.new(@name,data)
 
     assert_equal "Germany", name_and_address.country
   end
@@ -76,9 +77,8 @@ class Lobbyliste::Factories::NameAndAddressFactoryTest < Minitest::Test
       "KT6 4BN",
       "Vereinigtes Königreich",
     ]
-    name_and_address = Lobbyliste::Factories::NameAndAddressFactory.new(data, :secondary)
+    name_and_address = Lobbyliste::Factories::AddressFactory.new(@name, data, :secondary)
 
-    assert_equal "" ,name_and_address.name
     assert_equal "Crescent House, 5 The Cresent, Surbiton, Surrey" ,name_and_address.address
     assert_equal "KT6 4BN" ,name_and_address.postcode
     assert_equal nil ,name_and_address.city

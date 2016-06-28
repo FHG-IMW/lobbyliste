@@ -1,9 +1,8 @@
 module Lobbyliste
 
   # This class represents addresses found in the lobbylist.
-  class NameAndAddress
-
-    # @return [String] the name of the organisation
+  class Address
+    # @return [String] organisation name (the bold part)
     attr_reader :name
 
     # @return [String] Everything that is not part of the name or any other field
