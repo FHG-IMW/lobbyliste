@@ -37,7 +37,9 @@ organisation.people.map {|person| person.name} #=> ["Claudius Groß", "Markus Ho
 
 organisation.tags #=> ["Kultur", "Religion"]
 
-address = organisation.name_and_address
+organisation.abbreviations #=> []
+
+address = organisation.address
 puts address.full_address
 # 1219. Deutsche Stiftung für interreligiösen und #interkulturellen Dialog e. V.
 # Hinter der katholischen Kirche 3
