@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Ruby crawler for the list of lobbyists published by German Bundestag}
   spec.description   = %q{This gem crawls and parses the the list of lobbyists which is published as a PDF by the German Bundestag. }
-  spec.homepage      = "https://github.com/DarthMax/lobbyliste"
+  spec.homepage      = "https://github.com/FHG-IMW/lobbyliste"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
