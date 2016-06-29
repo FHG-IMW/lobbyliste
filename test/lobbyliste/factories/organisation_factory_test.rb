@@ -57,7 +57,7 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
   end
 
   def test_factory_builds_an_organisation
-    organisation = Lobbyliste::Factories::OrganisationFactory.build(@name, @organisation_data)
+    organisation = Lobbyliste::Factories::OrganisationFactory.build(@name, @organisation_data,[],[])
     assert organisation.is_a?(Lobbyliste::Organisation)
     assert 1, organisation.id
   end

@@ -1,6 +1,11 @@
 module Lobbyliste
   module Factories
+    # This class is used to build an address from raw data
+    # Since it is to hard to separate the na,e and address data without markup,
+    # we use the html data to accomplish that
     class AddressFactory
+
+      # @return [Lobbyliste::Address]
       def self.build(name,raw_data, type=:primary)
         factory = new(name,raw_data,type)
         ::Lobbyliste::Address.new(

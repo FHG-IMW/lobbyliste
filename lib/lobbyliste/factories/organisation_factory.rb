@@ -1,7 +1,11 @@
 module Lobbyliste
   module Factories
+
+    # This class is used to build an organisation from raw data
     class OrganisationFactory
-      def self.build(name, raw_data)
+
+      # @return [Lobbyliste::Organisation]
+      def self.build(name, raw_data,tags,abbreviations)
         factory = new(name, raw_data)
         ::Lobbyliste::Organisation.new(
             factory.id,
@@ -12,7 +16,9 @@ module Lobbyliste
             factory.people,
             factory.interests,
             factory.members,
-            factory.associated_organisations
+            factory.associated_organisations,
+            tags,
+            abbreviations
         )
       end
 

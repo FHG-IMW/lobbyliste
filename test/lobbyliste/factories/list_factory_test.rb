@@ -39,6 +39,12 @@ class Lobbyliste::Factories::ListFactoryTest < Minitest::Test
     refute organisations[2].tags.any?
   end
 
+  def test_organisation_abbreviations
+    assert_equal ["ABDA"], @list.organisations.first.abbreviations
+    assert_equal ["BBB"], @list.organisations.last.abbreviations
+    refute @list.organisations[2].abbreviations.any?
+  end
+
   def test_tag_extraction
     assert_equal 2, @list.tags.keys.count
     refute @list.tags.keys.include?("Dialog")
@@ -47,8 +53,17 @@ class Lobbyliste::Factories::ListFactoryTest < Minitest::Test
 
   def test_name_extraction
     assert_equal 4, @list.names.keys.count
-    assert_equal %w{1 2 3 4}, @list.names.keys
-    assert_equal "1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V.", @list.names["1"]
+    assert_equal [1, 2, 3, 4], @list.names.keys
+    assert_equal "1219. Deutsche Stiftung für interreligiösen und interkulturellen Dialog e. V.", @list.names[1]
+  end
+
+  def test_abbreviation_extraction
+    assert_equal ["ABDA","BBB"], @list.abbreviations.keys
+    assert_equal [4], @list.abbreviations["BBB"]
+  end
+
+  def test_last_update
+    assert_equal Date.parse("10.06.2016"), @list.last_update
   end
 
   def test_build

@@ -27,6 +27,8 @@ module Lobbyliste
 
     private
 
+    # Since this link changes with every new version we download the Lobbyliste website and try to extract the link
+    # @return [String] the link to the Lobbyliste pdf
     def pdf_link
       website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
       link = website.css(".inhalt a[title^='Aktuelle Fassung']").first

@@ -30,9 +30,12 @@ module Lobbyliste
     attr_reader :associated_organisations
 
     # @return [Array] list of tags
-    attr_accessor :tags
+    attr_reader :tags
 
-    def initialize(id, name, address, additional_address, address_at_bt_br, people, interests, members, associated_organisations)
+    # @return [Array] list of abbreviations
+    attr_reader :abbreviations
+
+    def initialize(id, name, address, additional_address, address_at_bt_br, people, interests, members, associated_organisations,tags,abbreviations)
       @id = id
       @name = name
       @address = address
@@ -42,7 +45,8 @@ module Lobbyliste
       @interests = interests
       @members = members
       @associated_organisations = associated_organisations
-      @tags = []
+      @tags = tags
+      @abbreviations = abbreviations
     end
 
     # @return [Array] list of all known addresses
@@ -59,7 +63,8 @@ module Lobbyliste
           interests: interests,
           members: members,
           associated_organisations: associated_organisations,
-          tags: tags
+          tags: tags,
+          abbreviations: abbreviations
       }.to_json(*a)
     end
   end

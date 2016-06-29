@@ -1,22 +1,29 @@
 module Lobbyliste
   module Factories
+    # This class is used to build the list from raw data
     class ListFactory
       attr_reader :data
 
+      # @return [Lobbyliste::List]
       def self.build(text_data,html_data)
         factory = new(text_data,html_data)
         ::Lobbyliste::List.new(
           factory.organisations,
-          factory.tags
+          factory.tags,
+          factory.abbreviations,
+          factory.last_update
         )
       end
 
       def initialize(text_data,html_data)
         @text_data = text_data
         @html_data = html_data
+
         @lines = text_data.each_line.to_a.map(&:chomp)
+
         @organisations = nil
         @tags = nil
+        @abbreviations = nil
         @names = nil
       end
 
@@ -24,13 +31,12 @@ module Lobbyliste
         return @organisations if @organisations
 
         @organisations = organisations_data.map do |organisation_data|
-          name = names[organisation_data[0]]
-          ::Lobbyliste::Factories::OrganisationFactory.build(name,organisation_data)
+          id = organisation_data[0].to_i
+          name = names[id]
+          tags = tags_for_organisation(id)
+          abbreviations = abbreviations_for_organisation(id)
+          ::Lobbyliste::Factories::OrganisationFactory.build(name,organisation_data,tags,abbreviations)
         end
-
-        tag_organisations
-
-        @organisations
       end
 
       def names
@@ -56,6 +62,28 @@ module Lobbyliste
         end
 
         @tags = tags
+      end
+
+
+      def abbreviations
+        return @abbreviations if @abbreviations
+        abbreviations = Hash.new{|h,k| h[k] = []}
+        current_abbr = "A"
+        extract_abbreviation_data.each do |line|
+          if line.match(/^[A-ZÄÖÜ][A-ZÄÖÜa-zäöüß]+$/) && [current_abbr[0],current_abbr[0].next].include?(line[0])
+            current_abbr = line
+          elsif line.match(/^\– \d+/)
+            id = line.match(/^\– (\d+)/)[1].to_i
+            abbreviations[current_abbr] << id
+          end
+        end
+
+        @abbreviations = abbreviations
+      end
+
+      def last_update
+        date = @text_data.match /^Stand: (\d\d\.\d\d\.\d\d\d\d)/
+        Date.parse(date[1])
       end
 
       private
@@ -93,13 +121,24 @@ module Lobbyliste
             reject {|line| ignored_line?(line)}
         end
 
-        def tag_organisations
-          tags.each_pair do |tag,organisation_ids|
-            organisation_ids.each do |organisation_id|
-              org = @organisations.find {|o| o.id == organisation_id}
-              org.tags << tag if org
-            end
-          end
+        def extract_abbreviation_data
+          start_line = @lines.index {|line| line == "Verzeichnis der anderen Namensformen"}
+          @lines.
+            drop(start_line+1).
+            reject {|line| ignored_line?(line)}
+        end
+
+        def tags_for_organisation(organisation_id)
+
+          tags.
+              select {|_,organisation_ids| organisation_ids.include?(organisation_id)}.
+              map(&:first)
+        end
+
+        def abbreviations_for_organisation(organisation_id)
+          abbreviations.
+              select {|_,organisation_ids| organisation_ids.include?(organisation_id)}.
+              map(&:first)
         end
 
 
@@ -110,7 +149,7 @@ module Lobbyliste
 
           @html_data.to_enum(:scan, regexp).each do
             match = Regexp.last_match
-            names[match[1]] = CGI.unescape_html(match[2].gsub("\n"," "))
+            names[match[1].to_i] = CGI.unescape_html(match[2].gsub("\n"," "))
           end
 
           @names = names
