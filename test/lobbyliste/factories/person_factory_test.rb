@@ -37,5 +37,6 @@ class Lobbyliste::Factories::PersonFactoryTest < Minitest::Test
     assert person.is_a?(Lobbyliste::Person)
     assert_equal "Max Mustermann", person.name
     assert_equal ["Prof. Dr.med.vet","1. Vorsitzender"], person.titles
+    assert_equal line, person.original_name
   end
 end

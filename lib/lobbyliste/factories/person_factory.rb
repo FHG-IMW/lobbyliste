@@ -33,7 +33,7 @@ module Lobbyliste
       # @return [Lobbylist::Person] builds a new person, might be nil if the line does not represent a person
       def self.build(raw_data)
         factory = new(raw_data)
-        factory.is_person? ? ::Lobbyliste::Person.new(factory.name,factory.titles) : nil
+        factory.is_person? ? ::Lobbyliste::Person.new(factory.name,factory.titles,raw_data) : nil
       end
 
       def initialize(raw_data)

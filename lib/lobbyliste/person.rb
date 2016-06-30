@@ -8,13 +8,17 @@ module Lobbyliste
     # @return [Array] list of all titles (job, academic, positions)
     attr_reader :titles
 
-    def initialize(name, titles)
+    # @return [String] the original name with titles as stated in the document
+    attr_reader :original_name
+
+    def initialize(name, titles, original_name)
       @name = name
       @titles = titles
+      @original_name = original_name
     end
 
     def ==(other)
-      name==other.name && titles==other.titles
+      original_name==other.original_name
     end
 
     def to_json(*a)
