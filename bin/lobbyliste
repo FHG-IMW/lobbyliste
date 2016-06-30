@@ -2,6 +2,22 @@
 
 require "bundler/setup"
 require "lobbyliste"
+require 'optparse'
 
-list = Lobbyliste.fetch_and_parse
+$url = nil
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: lobbyliste [options]"
+
+  opts.on("-u","--url URL","Specify link to Lobbyliste pdf") do |url|
+   $url = url
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+      puts opts
+      exit
+  end
+end.parse!
+
+list = Lobbyliste.fetch_and_parse($url)
 puts list.to_json
