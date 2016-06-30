@@ -6,6 +6,12 @@ module Lobbyliste
   # This class finds the lobbyliste pdf on the Bundestag website, downloads it and extracts the pdf content
   class Downloader
 
+    # Creates a new Downloader
+    # @param [String] link that will be used to fetch the lobbylist pdf, defaults to nil
+    def initialize(pdf_link=nil)
+      @pdf_link = pdf_link
+    end
+
     # @return [String] raw content of pdf file
     def pdf_data
       retrieve_pdf unless @pdf_data
@@ -25,17 +31,24 @@ module Lobbyliste
       @html_data
     end
 
+    # @return [String] link to Lobbyliste pdf
+    def pdf_link
+      fetch_pdf_link unless @pdf_link
+      @pdf_link
+    end
+
     private
 
     # Since this link changes with every new version we download the Lobbyliste website and try to extract the link
     # @return [String] the link to the Lobbyliste pdf
-    def pdf_link
+    def fetch_pdf_link
       website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
       link = website.css(".inhalt a[title^='Aktuelle Fassung']").first
 
       raise "Could no find PDF link on the website!" unless link
-      "https://bundestag.de#{link['href']}"
+      @pdf_link = "https://bundestag.de#{link['href']}"
     end
+
 
     def retrieve_pdf
       @pdf_data = open(pdf_link) {|f| f.read}
