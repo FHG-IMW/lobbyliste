@@ -67,7 +67,7 @@ module Lobbyliste
           line = interest_lines[i]
           next_line = interest_lines[i+1]
 
-          if line =~ /[-–]$/ && !(next_line.start_with?("und"," und"))
+          if line =~ /[-–]$/ && !(next_line.start_with?("und"," und", "oder", " oder"))
             line.gsub!(/[-–]$/,"")
             next_line_words = next_line.split(" ")
 
@@ -79,7 +79,7 @@ module Lobbyliste
           interest_lines[i+1] = next_line
         end
 
-        interest_lines.reject(&:blank?).join(" ")
+        interest_lines.reject(&:blank?).join("\n")
       end
 
       def members

@@ -131,10 +131,8 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
   def test_interest_extraction
     interests = @org.interests
 
-    p interests
-
-    assert interests.include? "die Förderung von Dialogkultur"
-    assert interests.include? "integrative Maßnahme."
+    assert interests.include? "- die Förderung von Dialogkultur als friedensschaffende und integrative\n"
+    assert interests.include? "Maßnahme."
     refute interests.include? "Religionsund Meinungsfreiheit"
   end
 

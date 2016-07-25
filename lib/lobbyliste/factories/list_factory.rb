@@ -82,7 +82,7 @@ module Lobbyliste
       end
 
       def last_update
-        date = @text_data.match /^Stand: (\d\d\.\d\d\.\d\d\d\d)/
+        date = @text_data.match(/^Stand: (\d\d\.\d\d\.\d\d\d\d)/)
         Date.parse(date[1])
       end
 
