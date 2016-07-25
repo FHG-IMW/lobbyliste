@@ -60,7 +60,26 @@ module Lobbyliste
       end
 
       def interests
-        read_section("I n t e r e s s e n b e r e i c h").join(" ").gsub(/(- )(?=[a-z])/,"")
+        interest_lines = read_section("I n t e r e s s e n b e r e i c h").dup
+
+
+        (0..interest_lines.count-1).each do |i|
+          line = interest_lines[i]
+          next_line = interest_lines[i+1]
+
+          if line =~ /[-–]$/ && !(next_line.start_with?("und"," und"))
+            line.gsub!(/[-–]$/,"")
+            next_line_words = next_line.split(" ")
+
+            line += next_line_words.slice!(0)
+            next_line = next_line_words.join(" ")
+          end
+
+          interest_lines[i] = line
+          interest_lines[i+1] = next_line
+        end
+
+        interest_lines.reject(&:blank?).join(" ")
       end
 
       def members

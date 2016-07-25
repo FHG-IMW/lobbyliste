@@ -28,6 +28,8 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
         "- wissenschaftliche Bearbeitung von Aspekte des Dialogs und der",
         "Funktion von Religion in der deutschen und europäischen Gesell-",
         "schaft;",
+        "Religions-",
+        "und Meinungsfreiheit",
         "- Eintreten für das Grundrecht und das universale Menschenrecht Re-",
         "ligionsfreiheit (auch die negative Religionsfreiheit/Weltan-",
         "schauungsfreiheit);",
@@ -127,8 +129,13 @@ class Lobbyliste::Factories::OrganisationFactoryTest < Minitest::Test
   end
 
   def test_interest_extraction
-    assert @org.interests.include? "die Förderung von Dialogkultur"
-    assert @org.interests.include? "integrative Maßnahme."
+    interests = @org.interests
+
+    p interests
+
+    assert interests.include? "die Förderung von Dialogkultur"
+    assert interests.include? "integrative Maßnahme."
+    refute interests.include? "Religionsund Meinungsfreiheit"
   end
 
   def test_member_extraction
