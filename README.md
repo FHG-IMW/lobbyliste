@@ -65,6 +65,7 @@ $ lobbyliste | gzip > lobbyliste.json.gz
 # Special Thanks
 
 - [Sebastian Vollnhals (@yetzt)](https://github.com/yetzt) - for his excellent node based scraper for the lobbyliste (https://github.com/yetzt/scraper-lobbyliste) from which many lines were reused.
+- [Apache PDFBox](https://pdfbox.apache.org/) project for making working with PDFs a lot easier. PDFBox jar file is contained under ext folder (including license information).
 
 # Contributing
 
