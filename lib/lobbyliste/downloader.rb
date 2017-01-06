@@ -43,7 +43,7 @@ module Lobbyliste
     # @return [String] the link to the Lobbyliste pdf
     def fetch_pdf_link
       website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
-      link = website.css(".inhalt a[title^='Aktuelle Fassung']").first
+      link = website.css("a[title^='Aktuelle Fassung']").first
 
       raise "Could no find PDF link on the website!" unless link
       @pdf_link = "https://bundestag.de#{link['href']}"
