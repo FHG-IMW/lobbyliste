@@ -45,13 +45,23 @@ module Lobbyliste
       website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
       link = website.css("a[title^='Aktuelle Fassung']").first
 
-      raise "Could no find PDF link on the website!" unless link
+      raise NoPdfLinkFound.new("Could not find link to the Lobbyist PDF on the bundestag website!") unless link
       @pdf_link = "https://bundestag.de#{link['href']}"
+    end
+
+    def http_version_of_url(url)
+      url.gsub('https://', 'http://')
     end
 
 
     def retrieve_pdf
-      @pdf_data = open(pdf_link) {|f| f.read}
+      begin
+        @pdf_data = open(pdf_link) {|f| f.read}
+      rescue RuntimeError => error
+        non_https_link = http_version_of_url(pdf_link)
+        @pdf_data = open(non_https_link) {|f| f.read}
+      end
+
     end
 
 
@@ -81,4 +91,6 @@ module Lobbyliste
       File.join(File.dirname(File.expand_path(__FILE__)), '../../ext/pdfbox.jar')
     end
   end
+
+  class NoPdfLinkFound < StandardError ; end
 end
