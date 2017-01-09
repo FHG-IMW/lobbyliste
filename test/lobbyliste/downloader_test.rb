@@ -30,11 +30,4 @@ class Lobbyliste::OrganisationTest < Minitest::Test
     end
   end
 
-  private
-
-  def pdf_test_data
-    path = File.join(File.dirname(File.expand_path(__FILE__)), '../test_data/lobbylisteaktuell-data.pdf')
-
-    File.read(path)
-  end
 end
