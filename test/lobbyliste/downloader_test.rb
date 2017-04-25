@@ -5,7 +5,7 @@ class Lobbyliste::OrganisationTest < Minitest::Test
   def test_pdf_link
     VCR.use_cassette("bundestag_website") do
       downloader = Lobbyliste::Downloader.new
-      assert_equal "https://bundestag.de/blob/189476/cd1d8b6600a5d5e39f7366cad34ed9b7/lobbylisteaktuell-data.pdf", downloader.pdf_link
+      assert_equal "https://bundestag.de/blob/189476/b5c8f2195537f84bdb1fe398ff721d9d/lobbylisteaktuell-data.pdf", downloader.pdf_link
     end
   end
 

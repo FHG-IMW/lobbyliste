@@ -37,17 +37,19 @@ module Lobbyliste
       @pdf_link
     end
 
-    private
-
-    # Since this link changes with every new version we download the Lobbyliste website and try to extract the link
+    # Since the link to the PDF changes with every new version we download the Lobbyliste website and extract the link
+    # Use this method to extract link from different page if the bundestag website structure is changed again
+    # @param [String] page that will be used to extract the PDF link. May change from time to time.
     # @return [String] the link to the Lobbyliste pdf
-    def fetch_pdf_link
-      website = Nokogiri::HTML(open("https://www.bundestag.de/dokumente/lobbyliste"))
+    def fetch_pdf_link(bundestag_page = "https://www.bundestag.de/parlament/lobbyliste")
+      website = Nokogiri::HTML(open(bundestag_page))
       link = website.css("a[title^='Aktuelle Fassung']").first
 
       raise NoPdfLinkFound.new("Could not find link to the Lobbyist PDF on the bundestag website!") unless link
       @pdf_link = "https://bundestag.de#{link['href']}"
     end
+
+    private
 
     def http_version_of_url(url)
       url.gsub('https://', 'http://')
