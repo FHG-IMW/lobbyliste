@@ -81,7 +81,7 @@ class Lobbyliste::Factories::AddressFactoryTest < Minitest::Test
 
     assert_equal "Crescent House, 5 The Cresent, Surbiton, Surrey" ,name_and_address.address
     assert_equal "KT6 4BN" ,name_and_address.postcode
-    assert_equal nil ,name_and_address.city
+    assert_nil name_and_address.city
     assert_equal "Vereinigtes Königreich" ,name_and_address.country
   end
 
